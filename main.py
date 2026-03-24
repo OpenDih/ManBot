@@ -2,7 +2,6 @@ import asyncio
 import os
 import sys
 import logging
-from collections import defaultdict, deque
 import discord
 from dotenv import load_dotenv
 import core.functions as functions
@@ -10,8 +9,7 @@ import core.functions as functions
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Message history storage
-history = defaultdict(lambda: deque(maxlen=50))
+# (History is stored in core/functions.py's `history_store`.)
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -72,22 +70,28 @@ async def on_message(message):
         # Make API request to LLM
         response_data = await functions.manbotAPIRequest(SERVER_API, context)
 
-        if response_data and isinstance(response_data, dict) and "response" in response_data:
-            response_text = response_data["response"]
-
-            # Add bot response to history
-            functions.addBotMessage(memory_key, response_text)
-
-            # Send response to Discord
-            await message.channel.send(response_text)
+        # Handle API responses and errors
+        if isinstance(response_data, dict):
+            if "error" in response_data:
+                # Backend returned an error object
+                logger.error(f"ManBot API error: {response_data.get('error')}")
+                await message.channel.send("Sorry, the backend returned an error processing your request.")
+            elif "response" in response_data:
+                response_text = response_data["response"]
+                functions.addBotMessage(memory_key, response_text)
+                await message.channel.send(response_text)
+            else:
+                # Unexpected dict shape
+                logger.error(f"Unexpected ManBot API response: {response_data}")
+                await message.channel.send("Sorry, I received an unexpected response from the backend.")
         elif isinstance(response_data, str):
-            # Handle string responses
+            # Handle plain string responses
             functions.addBotMessage(memory_key, response_data)
             await message.channel.send(response_data)
         else:
-            # Handle API errors
-            error_msg = "Sorry, I encountered an error processing your request."
-            await message.channel.send(error_msg)
+            # Generic fallback for other response types
+            logger.error(f"Invalid ManBot API response type: {type(response_data)} -> {response_data}")
+            await message.channel.send("Sorry, I encountered an error processing your request.")
 
 @client.event
 async def on_error(event):
