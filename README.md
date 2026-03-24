@@ -1,6 +1,6 @@
 # ManBot
 
-The Discord bot that acts as the official interface for ManGPT, developed by Team OpenDih.
+The Discord bot that acts as the official interface for ManGPT, developed by Team OpenDIH.
 ManBot is specifically trained on the anonymized chat messages from Manware Discord server.
 
 <i>The bot is currently under development.</i>
@@ -8,7 +8,7 @@ ManBot is specifically trained on the anonymized chat messages from Manware Disc
 ## Contribution Guidelines
 
 ### Steps to install
-1. Fork this repository.
+1. <b>Fork this repository first.</b> (This is for safety of the repo for any breaking changes.)
 2. Clone your forked repository to your local machine.
 3. Run the requirements file: `pip install -r requirements.txt`
 4. Create a new branch for your feature or bug fix.
@@ -17,7 +17,7 @@ ManBot is specifically trained on the anonymized chat messages from Manware Disc
 7. Describe the changes made and why they're needed in the pull request description.
 8. Wait for review from the Bot Lead.
 
-### Reporting Issues
+### Reporting Issues (Issues Guideline)
 When reporting issues, please include:
 
 - Detailed description of the problem
@@ -45,10 +45,10 @@ When reporting issues, please include:
 ## Support
 For support and questions:
 
-- Create an issue in the repository
-- Contact the Bot Lead directly
-- Check existing issues for similar problems
+- Check existing issues for similar problems.
+- Create an issue in the repository, following the issues guideline.
+- Contact the Bot Lead `@atshayk` directly for any pressing matters.
 
 ---
 
-_Developed by OpenDih_
+_Developed by Open Digital Intiative Hub_
