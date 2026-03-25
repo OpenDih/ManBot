@@ -17,7 +17,7 @@ ManBot is specifically trained on the anonymized chat messages from Manware Disc
 7. Describe the changes made and why they're needed in the pull request description.
 8. Wait for review from the Bot Lead.
 
-### Reporting Issues (Issues Guideline)
+### Guide for Issues
 When reporting issues, please include:
 
 - Detailed description of the problem
