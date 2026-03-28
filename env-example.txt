@@ -1,0 +1,7 @@
+DISCORD_TOKEN =
+SERVER_API =
+
+DB_HOST =
+DB_USER = 
+DB_PW = 
+DB = discord_bot

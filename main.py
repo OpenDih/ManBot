@@ -5,13 +5,29 @@ import logging
 import discord
 from dotenv import load_dotenv
 import core.functions as functions
+import mysql.connector as lewd
+
+load_dotenv()
+# Database to Store Convo (later we use them to train model)
+conn=lewd.connect(host = os.getenv("DB_HOST"),
+                  user = os.getenv("DB_USER"),
+                  password = os.getenv("DB_PW") ,
+                  database = os.getenv("DB")
+                 )
+cursor=conn.cursor() #connection done 
+
+INSERT_CHAT_PAIR = """
+INSERT INTO chat_pairs (user_message, bot_reply)
+VALUES (%s, %s)
+"""
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # (History is stored in core/functions.py's `history_store`.)
 
-load_dotenv()
+
 TOKEN = os.getenv("DISCORD_TOKEN")
 SERVER_API = os.getenv("SERVER_API")
 
@@ -63,7 +79,7 @@ async def on_message(message):
     if should_respond and SERVER_API:
         # Add user message to history
         functions.addUserMessage(memory_key, user_text)
-
+        
         # Build context for API request
         context = functions.buildContext(message, user_text, memory_key)
 
@@ -79,6 +95,14 @@ async def on_message(message):
             elif "response" in response_data:
                 response_text = response_data["response"]
                 functions.addBotMessage(memory_key, response_text)
+
+                
+               
+                if user_text and response_text and len(user_text) > 2:
+                    cursor.execute(INSERT_CHAT_PAIR, (user_text, response_text))
+                    conn.commit()
+
+                
                 await message.channel.send(response_text)
             else:
                 # Unexpected dict shape
@@ -87,6 +111,14 @@ async def on_message(message):
         elif isinstance(response_data, str):
             # Handle plain string responses
             functions.addBotMessage(memory_key, response_data)
+
+
+            
+            if user_text and response_data and len(user_text) > 2:
+                cursor.execute(INSERT_CHAT_PAIR, (user_text, response_data))
+                conn.commit()   
+
+            
             await message.channel.send(response_data)
         else:
             # Generic fallback for other response types
